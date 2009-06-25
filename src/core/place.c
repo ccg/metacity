@@ -436,7 +436,7 @@ find_first_fit (MetaWindow *window,
         return TRUE;
       }
 
-  return FALSE;
+    return FALSE;
 }
 
 void
