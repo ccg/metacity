@@ -487,54 +487,26 @@ center_tile_rect_in_area (MetaRectangle *rect,
   rect->y = work_area->y + fluff;
 }
 
-/* Find the leftmost, then topmost, empty area on the workspace
- * that can contain the new window.
- *
- * Cool feature to have: if we can't fit the current window size,
- * try shrinking the window (within geometry constraints). But
- * beware windows such as Emacs with no sane minimum size, we
- * don't want to create a 1x1 Emacs.
+/* Center the window in the work_area. If it fits, return TRUE, else
+ * return FALSE.
  */
 static gboolean
 find_first_fit (MetaWindow *window,
                 MetaFrameGeometry *fgeom,
                 /* visible windows on relevant workspaces */
                 GList      *windows,
-		int         xinerama,
+                int         xinerama,
                 int         x,
                 int         y,
                 int        *new_x,
                 int        *new_y)
 {
-  /* This algorithm is limited - it just brute-force tries
-   * to fit the window in a small number of locations that are aligned
-   * with existing windows. It tries to place the window on
-   * the bottom of each existing window, and then to the right
-   * of each existing window, aligned with the left/top of the
-   * existing window in each of those cases.
-   */  
-  int retval;
-  GList *below_sorted;
-  GList *right_sorted;
-  GList *tmp;
   MetaRectangle rect;
   MetaRectangle work_area;
-  
-  retval = FALSE;
 
-  /* Below each window */
-  below_sorted = g_list_copy (windows);
-  below_sorted = g_list_sort (below_sorted, leftmost_cmp);
-  below_sorted = g_list_sort (below_sorted, topmost_cmp);  
-
-  /* To the right of each window */
-  right_sorted = g_list_copy (windows);
-  right_sorted = g_list_sort (right_sorted, topmost_cmp);
-  right_sorted = g_list_sort (right_sorted, leftmost_cmp);
-  
   rect.width = window->rect.width;
   rect.height = window->rect.height;
-  
+
   if (fgeom)
     {
       rect.width += fgeom->left_width + fgeom->right_width;
@@ -556,8 +528,7 @@ find_first_fit (MetaWindow *window,
 
     center_tile_rect_in_area (&rect, &work_area);
 
-    if (meta_rectangle_contains_rect (&work_area, &rect) &&
-        !rectangle_overlaps_some_window (&rect, windows))
+    if (meta_rectangle_contains_rect (&work_area, &rect))
       {
         *new_x = rect.x;
         *new_y = rect.y;
@@ -566,79 +537,11 @@ find_first_fit (MetaWindow *window,
             *new_x += fgeom->left_width;
             *new_y += fgeom->top_height;
           }
-    
-        retval = TRUE;
-       
-        goto out;
+
+        return TRUE;
       }
 
-    /* try below each window */
-    tmp = below_sorted;
-    while (tmp != NULL)
-      {
-        MetaWindow *w = tmp->data;
-        MetaRectangle outer_rect;
-
-        meta_window_get_outer_rect (w, &outer_rect);
-      
-        rect.x = outer_rect.x;
-        rect.y = outer_rect.y + outer_rect.height;
-      
-        if (meta_rectangle_contains_rect (&work_area, &rect) &&
-            !rectangle_overlaps_some_window (&rect, below_sorted))
-          {
-            *new_x = rect.x;
-            *new_y = rect.y;
-            if (fgeom)
-              {
-                *new_x += fgeom->left_width;
-                *new_y += fgeom->top_height;
-              }
-          
-            retval = TRUE;
-          
-            goto out;
-          }
-
-        tmp = tmp->next;
-      }
-
-    /* try to the right of each window */
-    tmp = right_sorted;
-    while (tmp != NULL)
-      {
-        MetaWindow *w = tmp->data;
-        MetaRectangle outer_rect;
-   
-        meta_window_get_outer_rect (w, &outer_rect);
-     
-        rect.x = outer_rect.x + outer_rect.width;
-        rect.y = outer_rect.y;
-   
-        if (meta_rectangle_contains_rect (&work_area, &rect) &&
-            !rectangle_overlaps_some_window (&rect, right_sorted))
-          {
-            *new_x = rect.x;
-            *new_y = rect.y;
-            if (fgeom)
-              {
-                *new_x += fgeom->left_width;
-                *new_y += fgeom->top_height;
-              }
-        
-            retval = TRUE;
-       
-            goto out;
-          }
-
-        tmp = tmp->next;
-      }
-      
- out:
-
-  g_list_free (below_sorted);
-  g_list_free (right_sorted);
-  return retval;
+  return FALSE;
 }
 
 void
