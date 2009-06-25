@@ -695,24 +695,6 @@ meta_window_place (MetaWindow        *window,
                                              &focus_window->rect,
                                              &overlap);
 
-      /* Try to do a first fit again, this time only taking into account the
-       * focus window.
-       */
-      if (!found_fit)
-        {
-          GList *focus_window_list;
-          focus_window_list = g_list_prepend (NULL, focus_window);
-
-          /* Reset x and y ("origin" placement algorithm) */
-          x = xi->rect.x;
-          y = xi->rect.y;
-
-          found_fit = find_first_fit (window, fgeom, focus_window_list,
-                                      xi->number,
-                                      x, y, &x, &y);
-          g_list_free (focus_window_list);
-	}
-
       /* If that still didn't work, just place it where we can see as much
        * as possible.
        */
