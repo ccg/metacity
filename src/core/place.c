@@ -375,21 +375,11 @@ avoid_being_obscured_as_second_modal_dialog (MetaWindow *window,
 }
 
 static void
-center_tile_rect_in_area (MetaRectangle *rect,
-                          MetaRectangle *work_area)
+center_rect_in_area (MetaRectangle *rect,
+                     MetaRectangle *work_area)
 {
-  int fluff;
-
-  /* The point here is to tile a window such that "extra"
-   * space is equal on either side (i.e. so a full screen
-   * of windows tiled this way would center the windows
-   * as a group)
-   */
-
-  fluff = (work_area->width % (rect->width+1)) / 2;
-  rect->x = work_area->x + fluff;
-  fluff = (work_area->height % (rect->height+1)) / 3;
-  rect->y = work_area->y + fluff;
+  rect->x = work_area->x + ((work_area->width - rect->width) / 2);
+  rect->y = work_area->y + ((work_area->height - rect->height) / 2);
 }
 
 /* Center the window in the work_area. If it fits, return TRUE, else
@@ -431,7 +421,7 @@ find_first_fit (MetaWindow *window,
 
     meta_window_get_work_area_for_xinerama (window, xinerama, &work_area);
 
-    center_tile_rect_in_area (&rect, &work_area);
+    center_rect_in_area (&rect, &work_area);
 
     if (meta_rectangle_contains_rect (&work_area, &rect))
       {
