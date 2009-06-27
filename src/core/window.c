@@ -6961,6 +6961,7 @@ update_move (MetaWindow  *window,
     new_y = old.y;
 
   /* Do any edge resistance/snapping */
+#if 0   /* actually, please don't. --ccg */
   meta_window_edge_resistance_for_move (window, 
                                         old.x,
                                         old.y,
@@ -6969,6 +6970,7 @@ update_move (MetaWindow  *window,
                                         update_move_timeout,
                                         snap,
                                         FALSE);
+#endif
 
   if (display->compositor)
     {
