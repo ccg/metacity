@@ -96,7 +96,9 @@ static void     update_move           (MetaWindow   *window,
                                        gboolean      snap,
                                        int           x,
                                        int           y);
+#if 0 /* ccg */
 static gboolean update_move_timeout   (gpointer data);
+#endif
 static void     update_resize         (MetaWindow   *window,
                                        gboolean      snap,
                                        int           x,
@@ -6803,6 +6805,7 @@ check_moveresize_frequency (MetaWindow *window,
     }
 }
 
+#if 0 /* ccg */
 static gboolean
 update_move_timeout (gpointer data)
 {
@@ -6815,6 +6818,7 @@ update_move_timeout (gpointer data)
 
   return FALSE;
 }
+#endif
 
 static void
 update_move (MetaWindow  *window,
