@@ -6964,18 +6964,6 @@ update_move (MetaWindow  *window,
   if (window->maximized_vertically)
     new_y = old.y;
 
-  /* Do any edge resistance/snapping */
-#if 0   /* actually, please don't. --ccg */
-  meta_window_edge_resistance_for_move (window, 
-                                        old.x,
-                                        old.y,
-                                        &new_x,
-                                        &new_y,
-                                        update_move_timeout,
-                                        snap,
-                                        FALSE);
-#endif
-
   if (display->compositor)
     {
       int root_x = new_x - display->grab_anchor_window_pos.x + display->grab_anchor_root_x;
@@ -7192,17 +7180,6 @@ update_resize (MetaWindow *window,
   /* compute gravity of client during operation */
   gravity = meta_resize_gravity_from_grab_op (window->display->grab_op);
   g_assert (gravity >= 0);
-  
-  /* Do any edge resistance/snapping */
-  meta_window_edge_resistance_for_resize (window,
-                                          old.width,
-                                          old.height,
-                                          &new_w,
-                                          &new_h,
-                                          gravity,
-                                          update_resize_timeout,
-                                          snap,
-                                          FALSE);
 
   if (window->display->grab_wireframe_active)
     {

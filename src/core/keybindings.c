@@ -1538,15 +1538,6 @@ process_keyboard_move_grab (MetaDisplay *display,
       else
         meta_window_get_client_root_coords (window, &old_rect);
 
-      meta_window_edge_resistance_for_move (window, 
-                                            old_rect.x,
-                                            old_rect.y,
-                                            &x,
-                                            &y,
-                                            NULL,
-                                            smart_snap,
-                                            TRUE);
-
       if (display->grab_wireframe_active)
         {
           meta_window_update_wireframe (window, x, y,
@@ -1913,17 +1904,6 @@ process_keyboard_resize_grab (MetaDisplay *display,
         old_rect = display->grab_wireframe_rect;
       else
         old_rect = window->rect;  /* Don't actually care about x,y */
-
-      /* Do any edge resistance/snapping */
-      meta_window_edge_resistance_for_resize (window,
-                                              old_rect.width,
-                                              old_rect.height,
-                                              &width,
-                                              &height,
-                                              gravity,
-                                              NULL,
-                                              smart_snap,
-                                              TRUE);
 
       if (display->grab_wireframe_active)
         {
